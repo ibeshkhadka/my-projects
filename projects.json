@@ -1,0 +1,40 @@
+{
+  "owner": "ibeshkhadka",
+  "exclude": ["my-projects", "ibeshkhadka"],
+  "projects": {
+    "brand-new-day-radio": {
+      "liveUrl": "https://ibeshkhadka.github.io/brand-new-day-radio/",
+      "description": "A cinematic single-page music player for the Spider-Man: Brand New Day soundtrack — full-screen artwork, live clock, pulsing online pill, and keyboard shortcuts. No frameworks, no build step.",
+      "tags": ["music", "player", "web"]
+    },
+    "ai-landscape": {
+      "liveUrl": "https://ibeshkhadka.github.io/ai-landscape/",
+      "description": "AI Model Tracker — an overview of AI companies, models, and a retention framework, all in one landscape view.",
+      "tags": ["ai", "tracker", "research"]
+    },
+    "loop-library": {
+      "liveUrl": "https://signals.forwardfuture.ai/loop-library/",
+      "description": "A collection of reusable loops for AI agents — each one tells an agent what to do, how to check its work, what to try next, and when to stop. A Forward Future project.",
+      "tags": ["ai", "agents", "skill"]
+    },
+    "video-shelf": {
+      "liveUrl": "https://video-shelf-eight.vercel.app",
+      "description": "A private YouTube video bookmark app — save videos by category with notes. Built with Vite, deployed on Vercel.",
+      "tags": ["app", "youtube", "bookmarks"]
+    },
+    "hello": {
+      "liveUrl": "https://ibeshkhadka.github.io/hello/",
+      "description": "A small web experiment.",
+      "tags": ["web", "experiment"]
+    },
+    "demo": {
+      "description": "A demo repository.",
+      "tags": ["demo"]
+    },
+    "ibeshkhadka.github.io": {
+      "liveUrl": "https://ibeshkhadka.github.io/",
+      "description": "My main GitHub Pages website.",
+      "tags": ["website", "portfolio"]
+    }
+  }
+}

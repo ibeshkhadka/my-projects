@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ibesh Khadka — Project Archive</title>
+  <meta name="description" content="Every project I've built, in one place. Live links, source code, and what each one does." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗂️</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">ibeshkhadka · project archive</p>
+      <h1>Everything I've <span class="gradient">built</span>, in one place.</h1>
+      <p class="subtitle">
+        I keep making projects and forgetting them — so this is the archive.
+        Every repo, every live link, auto-updated from GitHub.
+      </p>
+      <div class="hero-meta">
+        <span id="project-count" class="pill">loading…</span>
+        <a class="pill link" href="https://github.com/ibeshkhadka" target="_blank" rel="noopener">github.com/ibeshkhadka ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="controls">
+      <input id="search" type="search" placeholder="Search projects…" autocomplete="off" />
+      <div id="filters" class="filters"></div>
+    </div>
+
+    <div id="grid" class="grid" aria-live="polite"></div>
+
+    <div id="empty" class="empty hidden">
+      <p>No projects match that search. 🤷</p>
+    </div>
+
+    <p id="status" class="status"></p>
+  </main>
+
+  <footer class="footer">
+    <p>Built by <a href="https://github.com/ibeshkhadka" target="_blank" rel="noopener">Ibesh Khadka</a> · auto-synced with the GitHub API · <a href="https://github.com/ibeshkhadka/my-projects" target="_blank" rel="noopener">source ↗</a></p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
