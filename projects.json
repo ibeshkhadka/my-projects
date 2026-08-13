@@ -17,6 +17,10 @@
       "description": "A collection of reusable loops for AI agents — each one tells an agent what to do, how to check its work, what to try next, and when to stop.",
       "tags": ["ai", "agents", "skill"]
     },
+    "loopy": {
+      "description": "The next-gen Loop Library — a library of practical AI-agent loops plus the installable Loopy skill for finding, adapting, and designing repeatable agent workflows. Auto-syncs new content from upstream. (Worker-rendered site — not yet deployed.)",
+      "tags": ["ai", "agents", "skill"]
+    },
     "video-shelf": {
       "liveUrl": "https://video-shelf-eight.vercel.app",
       "description": "A private YouTube video bookmark app — save videos by category with notes. Built with Vite, deployed on Vercel.",
