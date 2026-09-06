@@ -1,28 +1,23 @@
-/* Project Archive — fetches repos live from the GitHub API and merges
-   them with the curated projects.json (live URLs, descriptions, tags). */
+/* Field Dossier — live GitHub API data merged with projects.json.
+   Same merge rules as the main archive: API is the roster, curated adds
+   liveUrl/description/tags, curated-only names appear as private entries. */
 
 const GITHUB_USER = "ibeshkhadka";
 const API_URL = `https://api.github.com/users/${GITHUB_USER}/repos?sort=updated&per_page=100&type=all`;
+const CURATED_URL = "projects.json";
+const EXCLUDE = new Set(["my-projects", "ibeshkhadka"]);
 
-const state = {
-  projects: [],      // merged list of { name, description, htmlUrl, liveUrl, tags, updatedAt, private, hasLive }
-  curated: {},       // from projects.json
-  search: "",
-  filter: "all",
-};
-
+const state = { projects: [], search: "", filter: "all" };
 const $ = (id) => document.getElementById(id);
-
-/* ---------- Data ---------- */
 
 async function loadCurated() {
   try {
-    const res = await fetch("projects.json", { cache: "no-store" });
+    const res = await fetch(CURATED_URL, { cache: "no-store" });
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
     return data.projects || {};
   } catch {
-    return {}; // curated layer is optional — site still works with raw API data
+    return {};
   }
 }
 
@@ -33,13 +28,11 @@ async function loadRepos() {
 }
 
 async function init() {
+  renderSkeletons();
   const [curated, repos] = await Promise.all([loadCurated(), loadRepos()]);
-  state.curated = curated;
-
-  const exclude = new Set(["my-projects", "ibeshkhadka"]);
 
   state.projects = repos
-    .filter((r) => !exclude.has(r.name))
+    .filter((r) => !EXCLUDE.has(r.name))
     .map((r) => {
       const c = curated[r.name] || {};
       return {
@@ -54,11 +47,9 @@ async function init() {
       };
     });
 
-  // Private repos aren't visible to the unauthenticated API — add them from
-  // the curated layer so they still appear in the archive.
   const apiNames = new Set(repos.map((r) => r.name));
   Object.entries(curated).forEach(([name, c]) => {
-    if (!apiNames.has(name) && !exclude.has(name)) {
+    if (!apiNames.has(name) && !EXCLUDE.has(name)) {
       state.projects.push({
         name,
         description: c.description || "No description yet.",
@@ -72,28 +63,49 @@ async function init() {
     }
   });
 
+  state.projects.sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+
   renderFilters();
   render();
-  $("project-count").textContent = `${state.projects.length} projects archived`;
-  $("status").textContent = "Auto-synced with the GitHub API — new repos appear automatically.";
+  $("project-count").textContent = `${state.projects.length} entries filed`;
+  $("spine-count").textContent = String(state.projects.length).padStart(2, "0");
+  $("cover-status").textContent = "STATUS: Dossier current";
+  $("ledger-date").textContent = new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  $("status").textContent = `Dossier current — ${state.projects.length} entries, refreshed from the GitHub API on each visit.`;
 }
 
-/* ---------- Rendering ---------- */
+function renderSkeletons() {
+  $("grid").innerHTML = Array.from({ length: 6 }, () => `
+    <div class="card skeleton" aria-hidden="true">
+      <div class="stub"><span>——</span></div>
+      <div class="skel-wrap">
+        <div class="skel" style="height:20px;width:60%"></div>
+        <div class="skel" style="height:14px;width:100%"></div>
+        <div class="skel" style="height:14px;width:80%"></div>
+        <div class="skel" style="height:36px;width:100%"></div>
+      </div>
+    </div>`).join("");
+}
 
 function renderFilters() {
   const tags = new Set(["all"]);
   state.projects.forEach((p) => p.tags.forEach((t) => tags.add(t)));
-
   const wrap = $("filters");
   wrap.innerHTML = "";
   [...tags].forEach((tag) => {
     const btn = document.createElement("button");
+    btn.type = "button";
     btn.className = "chip" + (tag === "all" ? " active" : "");
-    btn.textContent = tag;
+    btn.textContent = tag === "all" ? "all files" : tag;
     btn.dataset.tag = tag;
+    btn.setAttribute("aria-pressed", tag === "all" ? "true" : "false");
     btn.addEventListener("click", () => {
       state.filter = tag;
-      wrap.querySelectorAll(".chip").forEach((c) => c.classList.toggle("active", c.dataset.tag === tag));
+      wrap.querySelectorAll(".chip").forEach((c) => {
+        const on = c.dataset.tag === tag;
+        c.classList.toggle("active", on);
+        c.setAttribute("aria-pressed", on ? "true" : "false");
+      });
       render();
     });
     wrap.appendChild(btn);
@@ -107,60 +119,76 @@ function matches(p) {
     p.name.toLowerCase().includes(q) ||
     p.description.toLowerCase().includes(q) ||
     p.tags.some((t) => t.toLowerCase().includes(q));
-  const inFilter = state.filter === "all" || p.tags.includes(state.filter);
-  return inSearch && inFilter;
+  return inSearch && (state.filter === "all" || p.tags.includes(state.filter));
 }
 
 function badgeFor(p) {
-  if (p.private) return '<span class="badge private">private</span>';
-  if (p.hasLive) return '<span class="badge live">live</span>';
-  return '<span class="badge nolive">no live site</span>';
+  if (p.private) return '<span class="badge private">Private</span>';
+  if (p.hasLive) return '<span class="badge live">Live</span>';
+  return '<span class="badge">Source only</span>';
 }
 
-function cardHTML(p) {
-  const tags = p.tags.map((t) => `<span class="tag">${t}</span>`).join("");
+function cardHTML(p, i) {
+  const code = "A-" + String(i + 1).padStart(2, "0");
+  const tags = p.tags.map((t) => `<span class="tag">${escapeHTML(t)}</span>`).join("");
   const liveBtn = p.liveUrl
-    ? `<a class="btn live" href="${p.liveUrl}" target="_blank" rel="noopener">Open site ↗</a>`
-    : `<span class="btn live" style="opacity:.45;cursor:not-allowed">No live site</span>`;
+    ? `<a class="btn Go secondary" href="${p.liveUrl}" target="_blank" rel="noopener">Open site ↗</a>`
+    : `<span class="btn secondary disabled" aria-disabled="true">No live site</span>`;
+  const sourceBtn = p.private
+    ? ""
+    : `<a class="btn secondary" href="${p.htmlUrl}" target="_blank" rel="noopener">GitHub</a>`;
   const updated = p.updatedAt
-    ? `updated ${new Date(p.updatedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}`
-    : "archived";
-
+    ? new Date(p.updatedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })
+    : "curated entry";
   return `
     <article class="card">
-      <div class="card-top">
-        <h3>${p.name}</h3>
-        ${badgeFor(p)}
+      <div class="stub" aria-hidden="true"><span>${code}</span></div>
+      <div class="card-body">
+        <div class="card-top">
+          <h3>${escapeHTML(p.name)}</h3>
+          ${badgeFor(p)}
+        </div>
+        <p class="desc">${escapeHTML(p.description)}</p>
+        ${tags ? `<div class="tags">${tags}</div>` : ""}
+        <div class="card-actions">${liveBtn}${sourceBtn}</div>
+        <span class="updated">UPD. ${escapeHTML(updated)}</span>
       </div>
-      <p class="desc">${escapeHTML(p.description)}</p>
-      ${tags ? `<div class="tags">${tags}</div>` : ""}
-      <div class="card-actions">
-        ${liveBtn}
-        <a class="btn gh" href="${p.htmlUrl}" target="_blank" rel="noopener">GitHub ↗</a>
-      </div>
-      <span class="updated">updated ${updated}</span>
     </article>`;
 }
 
 function render() {
-  const grid = $("grid");
   const visible = state.projects.filter(matches);
-  grid.innerHTML = visible.map(cardHTML).join("");
+  $("grid").innerHTML = visible.map(cardHTML).join("");
   $("empty").classList.toggle("hidden", visible.length > 0);
 }
 
 function escapeHTML(s) {
-  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
-
-/* ---------- Events ---------- */
 
 $("search").addEventListener("input", (e) => {
   state.search = e.target.value.trim();
   render();
 });
 
+$("clear-search").addEventListener("click", () => {
+  $("search").value = "";
+  state.search = "";
+  state.filter = "all";
+  document.querySelectorAll("#filters .chip").forEach((c) => {
+    const on = c.dataset.tag === "all";
+    c.classList.toggle("active", on);
+    c.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+  render();
+  $("search").focus();
+});
+
+$("year").textContent = new Date().getFullYear();
+
 init().catch((err) => {
-  $("status").textContent = `Couldn't reach the GitHub API (${err.message}). Check your connection and refresh.`;
-  $("project-count").textContent = "offline";
+  $("grid").innerHTML = "";
+  $("status").textContent = `Connection failed (${err.message}). Check your connection and refresh — the dossier reads GitHub live.`;
+  $("project-count").textContent = "Dossier offline";
+  $("cover-status").textContent = "STATUS: OFFLINE — GITHUB UNREACHABLE";
 });

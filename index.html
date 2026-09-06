@@ -3,44 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ibesh Khadka — Project Archive</title>
-  <meta name="description" content="Every project I've built, in one place. Live links, source code, and what each one does." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗂️</text></svg>" />
+  <title>Ibesh Khadka — Field Dossier of Builds</title>
+  <meta name="description" content="Every project Ibesh Khadka has built, logged as a field dossier. Live GitHub data, search, tag filters. Open the site or read the source." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%230E2A2B'/%3E%3Ctext x='32' y='44' font-family='monospace' font-size='28' font-weight='700' fill='%23FF4D00' text-anchor='middle'%3EIK%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <header class="hero">
-    <div class="hero-inner">
-      <p class="eyebrow">ibeshkhadka · project archive</p>
-      <h1>Everything I've <span class="gradient">built</span>, in one place.</h1>
-      <p class="subtitle">
-        I keep making projects and forgetting them — so this is the archive.
-        Every repo, every live link, auto-updated from GitHub.
-      </p>
-      <div class="hero-meta">
-        <span id="project-count" class="pill">loading…</span>
-        <a class="pill link" href="https://github.com/ibeshkhadka" target="_blank" rel="noopener">github.com/ibeshkhadka ↗</a>
+  <a class="skip" href="#shelf">Skip to the shelf</a>
+
+  <div class="spine" aria-hidden="true">
+    <span class="spine-mark">IK — FIELD DOSSIER</span>
+    <span class="spine-mark dim">VOL. 2026 · <span id="spine-count">——</span></span>
+  </div>
+
+  <header class="cover">
+    <div class="cover-top mono">
+      <span>FILE NO. IK–2026</span>
+      <span class="dot" aria-hidden="true"></span>
+      <span id="cover-status">PULLING FROM GITHUB…</span>
+      <span class="dot" aria-hidden="true"></span>
+      <span>IBESHKHADKA / ARCHIVE</span>
+    </div>
+
+    <div class="tape" aria-hidden="true"><span>Every build · one shelf · live from GitHub · Every build · one shelf · live from GitHub ·&nbsp;</span></div>
+
+    <div class="cover-grid">
+      <div>
+        <p class="eyebrow mono">A field log of everything shipped</p>
+        <h1>Built it?<br /><em>Logged it.</em></h1>
+        <p class="lede">This dossier collects every repo — live site plus source, stamped with its status — and refreshes from GitHub on each visit. No curation theater, just the shelf.</p>
+        <div class="cover-actions">
+          <a class="btn Go" href="#shelf">Open the shelf</a>
+          <a class="btn ghost" href="https://github.com/ibeshkhadka" target="_blank" rel="noopener">GitHub profile ↗</a>
+        </div>
+        <p class="count mono"><strong id="project-count">Loading projects…</strong><span> · refreshed from the GitHub API</span></p>
+      </div>
+      <div class="stamp-zone">
+        <div class="stamp" id="hero-stamp" aria-hidden="true">
+          <span class="stamp-top">FIELD VERIFIED</span>
+          <span class="stamp-mid">IK·26</span>
+          <span class="stamp-bot">LIVE FROM GITHUB</span>
+        </div>
+        <dl class="ledger mono">
+          <div><dt>OWNER</dt><dd>ibeshkhadka</dd></div>
+          <div><dt>SOURCE</dt><dd>api.github.com + projects.json</dd></div>
+          <div><dt>EXCLUDES</dt><dd>my-projects · ibeshkhadka</dd></div>
+          <div><dt>UPDATED</dt><dd id="ledger-date">on every visit</dd></div>
+        </dl>
       </div>
     </div>
   </header>
 
-  <main class="container">
+  <main id="shelf" class="shelf">
     <div class="controls">
-      <input id="search" type="search" placeholder="Search projects…" autocomplete="off" />
-      <div id="filters" class="filters"></div>
+      <label class="search">
+        <span class="visually-hidden">Search projects</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input id="search" type="search" placeholder="Search name, word, or tag…" autocomplete="off" />
+      </label>
+      <div id="filters" class="filters" role="group" aria-label="Filter by tag"></div>
     </div>
 
+    <p id="status" class="status mono" role="status"></p>
     <div id="grid" class="grid" aria-live="polite"></div>
 
     <div id="empty" class="empty hidden">
-      <p>No projects match that search. 🤷</p>
+      <p class="mono">DOSSIER EMPTY — NO MATCH</p>
+      <h2>Nothing filed under that search.</h2>
+      <p>Try a shorter term — a repo name, one tag, one word from the description.</p>
+      <button class="btn Go" id="clear-search" type="button">Clear search</button>
     </div>
-
-    <p id="status" class="status"></p>
   </main>
 
-  <footer class="footer">
-    <p>Built by <a href="https://github.com/ibeshkhadka" target="_blank" rel="noopener">Ibesh Khadka</a> · auto-synced with the GitHub API · <a href="https://github.com/ibeshkhadka/my-projects" target="_blank" rel="noopener">source ↗</a></p>
+  <footer class="footer mono">
+    <p>Logged by <a href="https://github.com/ibeshkhadka" target="_blank" rel="noopener">Ibesh Khadka</a> · <span id="year">2026</span></p>
+    <p><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="https://github.com/ibeshkhadka/my-projects" target="_blank" rel="noopener">Dossier source</a></p>
   </footer>
 
   <script src="js/main.js"></script>
