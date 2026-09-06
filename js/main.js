@@ -69,7 +69,6 @@ async function init() {
   render();
   $("project-count").textContent = `${state.projects.length} entries filed`;
   $("spine-count").textContent = String(state.projects.length).padStart(2, "0");
-  $("cover-status").textContent = "STATUS: Dossier current";
   $("ledger-date").textContent = new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
   $("status").textContent = `Dossier current — ${state.projects.length} entries, refreshed from the GitHub API on each visit.`;
 }
@@ -190,5 +189,5 @@ init().catch((err) => {
   $("grid").innerHTML = "";
   $("status").textContent = `Connection failed (${err.message}). Check your connection and refresh — the dossier reads GitHub live.`;
   $("project-count").textContent = "Dossier offline";
-  $("cover-status").textContent = "STATUS: OFFLINE — GITHUB UNREACHABLE";
+  // cover-status removed — header no longer shows status
 });
