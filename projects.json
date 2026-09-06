@@ -17,28 +17,19 @@
       "description": "A library of 50 reusable loops for AI agents — each one tells an agent what to do, how to check its work, what to try next, and when to stop. Includes the installable Loopy skill and an agent guide.",
       "tags": ["ai", "agents", "skill"]
     },
-    "loopy": {
-      "description": "Fork of the upstream Loopy project — the database-backed next-gen Loop Library. Kept as a fork with a daily auto-sync workflow so new upstream content flows in; the static site content is merged into loop-library.",
-      "tags": ["ai", "agents", "skill"]
-    },
-    "video-shelf": {
-      "liveUrl": "https://video-shelf-eight.vercel.app",
-      "description": "A private YouTube video bookmark app — save videos by category with notes. Built with Vite, deployed on Vercel.",
-      "tags": ["app", "youtube", "bookmarks"]
-    },
-    "hello": {
-      "liveUrl": "https://ibeshkhadka.github.io/hello/",
-      "description": "A small web experiment.",
-      "tags": ["web", "experiment"]
-    },
-    "demo": {
-      "description": "A demo repository.",
-      "tags": ["demo"]
-    },
     "ibeshkhadka.github.io": {
       "liveUrl": "https://ibeshkhadka.github.io/",
       "description": "My main GitHub Pages website.",
       "tags": ["website", "portfolio"]
+    },
+    "prompt-library": {
+      "liveUrl": "https://mosaic-prompt-library.vercel.app",
+      "description": "Prompt Library — a collection of reusable prompts, deployed on Vercel.",
+      "tags": ["ai", "prompts", "web"]
+    },
+    "stemkit": {
+      "description": "Split any YouTube song into stems.",
+      "tags": ["music", "ai", "audio"]
     }
   }
 }

@@ -101,7 +101,8 @@ h1 em { font-style: normal; color: var(--blaze); }
 .btn.Go:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
 .btn.ghost { background: transparent; }
 .btn.ghost:hover { background: var(--card); }
-.btn.secondary { background: var(--card); box-shadow: 3px 3px 0 var(--ink); padding: 10px 18px; font-size: 13px; }
+.btn.secondary { background: var(--card); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); padding: 10px 18px; font-size: 13px; }
+.btn.Go.secondary { background: var(--blaze); color: #fff; }
 .btn.secondary:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
 .btn.disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; background: transparent; }
 

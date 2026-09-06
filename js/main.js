@@ -29,28 +29,52 @@ async function loadRepos() {
 
 async function init() {
   renderSkeletons();
-  const [curated, repos] = await Promise.all([loadCurated(), loadRepos()]);
+  const curated = await loadCurated();
+  let repos = null;
+  let apiError = null;
+  try {
+    repos = await loadRepos();
+  } catch (err) {
+    apiError = err;
+  }
 
-  state.projects = repos
-    .filter((r) => !EXCLUDE.has(r.name))
-    .map((r) => {
-      const c = curated[r.name] || {};
-      return {
-        name: r.name,
-        description: c.description || r.description || "No description yet.",
-        htmlUrl: r.html_url,
-        liveUrl: c.liveUrl || null,
-        tags: c.tags || [],
-        updatedAt: r.updated_at,
-        private: r.private,
-        hasLive: Boolean(c.liveUrl),
-      };
+  if (repos) {
+    state.projects = repos
+      .filter((r) => !EXCLUDE.has(r.name))
+      .map((r) => {
+        const c = curated[r.name] || {};
+        return {
+          name: r.name,
+          description: c.description || r.description || "No description yet.",
+          htmlUrl: r.html_url,
+          liveUrl: c.liveUrl || null,
+          tags: c.tags || [],
+          updatedAt: r.updated_at,
+          private: r.private,
+          hasLive: Boolean(c.liveUrl),
+        };
+      });
+
+    const apiNames = new Set(repos.map((r) => r.name));
+    Object.entries(curated).forEach(([name, c]) => {
+      if (!apiNames.has(name) && !EXCLUDE.has(name)) {
+        state.projects.push({
+          name,
+          description: c.description || "No description yet.",
+          htmlUrl: `https://github.com/${GITHUB_USER}/${name}`,
+          liveUrl: c.liveUrl || null,
+          tags: c.tags || [],
+          updatedAt: null,
+          private: true,
+          hasLive: Boolean(c.liveUrl),
+        });
+      }
     });
-
-  const apiNames = new Set(repos.map((r) => r.name));
-  Object.entries(curated).forEach(([name, c]) => {
-    if (!apiNames.has(name) && !EXCLUDE.has(name)) {
-      state.projects.push({
+  } else {
+    // API down / rate-limited / file:// blocked — fall back to curated only
+    state.projects = Object.entries(curated)
+      .filter(([name]) => !EXCLUDE.has(name))
+      .map(([name, c]) => ({
         name,
         description: c.description || "No description yet.",
         htmlUrl: `https://github.com/${GITHUB_USER}/${name}`,
@@ -59,9 +83,8 @@ async function init() {
         updatedAt: null,
         private: true,
         hasLive: Boolean(c.liveUrl),
-      });
-    }
-  });
+      }));
+  }
 
   state.projects.sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
 
@@ -69,8 +92,13 @@ async function init() {
   render();
   $("project-count").textContent = `${state.projects.length} entries filed`;
   $("spine-count").textContent = String(state.projects.length).padStart(2, "0");
+  const liveCount = state.projects.filter((p) => p.hasLive).length;
+  $("ledger-live").textContent = `${liveCount} live sites`;
   $("ledger-date").textContent = new Date().toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
-  $("status").textContent = `Dossier current — ${state.projects.length} entries, refreshed from the GitHub API on each visit.`;
+  $("status").textContent = apiError
+    ? `GitHub API limit hit (${apiError.message}) — showing ${state.projects.length} curated entries. Refresh in a bit for the live roster.`
+    : `Dossier current — ${state.projects.length} entries, refreshed from the GitHub API on each visit.`;
+  if (apiError && state.projects.length === 0) throw apiError;
 }
 
 function renderSkeletons() {
