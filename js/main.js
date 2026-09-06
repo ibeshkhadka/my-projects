@@ -15,7 +15,10 @@ async function loadCurated() {
     const res = await fetch(CURATED_URL, { cache: "no-store" });
     if (!res.ok) throw new Error(res.status);
     const data = await res.json();
-    return data.projects || {};
+    // projects.json stores a list (Decap-friendly); index it by repo name
+    const map = {};
+    (data.projects || []).forEach((p) => { if (p && p.name) map[p.name] = p; });
+    return map;
   } catch {
     return {};
   }

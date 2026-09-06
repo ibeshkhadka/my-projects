@@ -15,7 +15,8 @@ A living archive of everything I've built. Every repo, every live link, in one p
 Just push a repo to GitHub — it shows up automatically. To give it a live link, description, and tags, add an entry to `projects.json`:
 
 ```json
-"my-new-project": {
+{
+  "name": "my-new-project",
   "liveUrl": "https://my-new-project.vercel.app",
   "description": "What it does.",
   "tags": ["web", "tool"]

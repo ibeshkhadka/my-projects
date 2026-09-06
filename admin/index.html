@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Field Dossier</title>
+  <meta name="robots" content="noindex" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:ital,wght@0,400..700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css?v=dossier1" />
+  <style>
+    .admin-wrap { max-width: 920px; margin: 0 auto; padding: 36px 40px 70px; }
+    .admin-head h1 { font-family: var(--display); font-weight: 800; letter-spacing: -0.02em; font-size: clamp(2rem, 5vw, 3rem); margin: 0 0 10px; }
+    .admin-head h1 em { font-style: normal; color: var(--blaze); }
+    .admin-head .lede { font-size: 1rem; line-height: 1.6; max-width: 40rem; margin: 0 0 22px; }
+    .admin-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 26px; }
+    .login-card { background: var(--card); border: 1.5px solid var(--ink); border-radius: var(--radius); box-shadow: 4px 4px 0 var(--ink); padding: 26px; max-width: 420px; }
+    .login-card label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; opacity: 0.7; margin: 12px 0 4px; }
+    .login-card label:first-of-type { margin-top: 0; }
+    .login-card input { width: 100%; font: inherit; font-size: 15px; color: inherit; background: var(--parchment); border: 1.5px solid var(--ink); border-radius: 8px; padding: 10px 14px; }
+    .login-card input:focus { outline: 3px solid var(--blaze); outline-offset: 1px; }
+    .login-card .btn { margin-top: 18px; width: 100%; justify-content: center; }
+    .login-error { font-family: var(--mono); font-size: 13px; color: var(--blaze); margin: 12px 0 0; min-height: 20px; }
+    .add-row { display: flex; gap: 10px; margin-bottom: 26px; }
+    .entry { background: var(--card); border: 1.5px solid var(--ink); border-radius: var(--radius); box-shadow: 4px 4px 0 var(--ink); padding: 18px; margin-bottom: 16px; }
+    .entry-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+    .entry-top h3 { font-family: var(--mono); font-size: 15px; margin: 0; overflow-wrap: anywhere; }
+    .badge { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; border: 1.5px solid var(--ink); border-radius: 999px; padding: 3px 10px; }
+    .badge.live { background: var(--moss); color: #fff; border-color: var(--ink); }
+    .badge.gone { background: transparent; opacity: 0.6; }
+    .entry label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; opacity: 0.7; margin: 10px 0 4px; }
+    .entry input[type="text"], .entry textarea { width: 100%; font: inherit; font-size: 14px; color: inherit; background: var(--parchment); border: 1.5px solid var(--ink); border-radius: 8px; padding: 9px 12px; }
+    .entry textarea { min-height: 64px; resize: vertical; line-height: 1.5; }
+    .entry input:focus, .entry textarea:focus, .add-row input:focus { outline: 3px solid var(--blaze); outline-offset: 1px; }
+    .add-row input { flex: 1; font: inherit; font-size: 14px; color: inherit; background: var(--card); border: 1.5px solid var(--ink); border-radius: 9px; padding: 10px 14px; }
+    .entry .row-end { display: flex; justify-content: flex-end; margin-top: 12px; }
+    .btn.danger { background: transparent; color: var(--ink); box-shadow: 3px 3px 0 var(--ink); padding: 8px 16px; font-size: 12.5px; }
+    .btn.danger:hover { background: var(--blaze); color: #fff; }
+    .admin-status { font-size: 12.5px; letter-spacing: 0.04em; margin: 6px 2px 0; min-height: 20px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="spine" aria-hidden="true">
+    <span class="spine-mark">IK — FIELD DOSSIER</span>
+    <span class="spine-mark dim">ADMIN · LOCAL ONLY</span>
+  </div>
+
+  <main class="admin-wrap">
+    <div id="login-view">
+      <div class="admin-head">
+        <p class="eyebrow mono">Restricted area</p>
+        <h1>Admin<br /><em>login.</em></h1>
+      </div>
+      <div class="login-card">
+        <label for="login-id">LOGIN ID</label>
+        <input id="login-id" type="text" autocomplete="username" spellcheck="false" />
+        <label for="login-pass">PASSWORD</label>
+        <input id="login-pass" type="password" autocomplete="current-password" />
+        <button class="btn Go" id="login-btn" type="button">Log in</button>
+        <p class="login-error" id="login-error" role="alert"></p>
+      </div>
+    </div>
+
+    <div id="panel-view" class="hidden">
+      <div class="admin-head">
+        <p class="eyebrow mono">Restricted — runs in your browser only</p>
+        <h1>Admin.<br /><em>Curated entries.</em></h1>
+        <p class="lede">Edit descriptions, live URLs, and tags for the shelf. This page can't write to GitHub by itself — hit <strong>Copy JSON</strong>, paste it into <span class="mono">projects.json</span>, commit, push. Done.</p>
+        <div class="admin-actions">
+          <button class="btn Go" id="copy-json" type="button">Copy JSON</button>
+          <button class="btn secondary" id="download-json" type="button">Download JSON</button>
+          <button class="btn secondary" id="logout-btn" type="button">Log out</button>
+          <a class="btn secondary" href="../index.html">Back to shelf</a>
+        </div>
+      </div>
+
+      <div class="add-row">
+        <input id="new-name" type="text" placeholder="new-repo-name…" autocomplete="off" spellcheck="false" />
+        <button class="btn Go" id="add-entry" type="button">Add</button>
+      </div>
+
+      <div id="entries"></div>
+      <p id="admin-status" class="admin-status mono" role="status"></p>
+    </div>
+  </main>
+
+  <script src="admin.js?v=dossier1"></script>
+</body>
+</html>
