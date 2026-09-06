@@ -138,22 +138,22 @@ h1 em { font-style: normal; color: var(--blaze); }
 /* Shelf */
 .shelf { max-width: 1180px; margin: 0 auto; padding: 36px 40px 70px; }
 .controls {
-  display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+  display: flex; flex-direction: column; gap: 12px; align-items: center;
   position: sticky; top: 12px; z-index: 10;
   background: rgba(236, 227, 204, 0.92); backdrop-filter: blur(8px);
   border: 1.5px solid var(--ink); border-radius: var(--radius); padding: 12px;
 }
 .search {
-  flex: 1 1 240px; display: flex; align-items: center; gap: 10px;
-  background: var(--card); border: 1.5px solid var(--ink); border-radius: 9px; padding: 0 14px;
+  width: 100%; max-width: none; display: flex; align-items: center; gap: 8px;
+  background: var(--card); border: 1.5px solid var(--ink); border-radius: 9px; padding: 0 12px;
 }
 .search input {
   flex: 1; border: 0; background: transparent; color: inherit;
-  font: inherit; font-size: 15px; padding: 12px 0;
+  font: inherit; font-size: 14px; padding: 9px 0;
 }
 .search input:focus { outline: none; }
 .search:focus-within { box-shadow: 3px 3px 0 var(--ink); }
-.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .chip {
   font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.03em;
   border: 1.5px solid var(--ink); background: transparent; color: inherit;
