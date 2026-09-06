@@ -39,6 +39,16 @@
     .btn.danger:hover { background: var(--blaze); color: #fff; }
     .admin-status { font-size: 12.5px; letter-spacing: 0.04em; margin: 6px 2px 0; min-height: 20px; }
     .hidden { display: none; }
+    .tags-panel { background: var(--card); border: 1.5px solid var(--ink); border-radius: var(--radius); box-shadow: 4px 4px 0 var(--ink); padding: 18px; margin-bottom: 26px; }
+    .tags-panel h2 { font-size: 12px; letter-spacing: 0.12em; margin: 0 0 12px; opacity: 0.7; }
+    .tag-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px dashed var(--ledger); }
+    .tag-row:first-of-type { border-top: 0; }
+    .tag-row .chip { font-family: var(--mono); font-size: 12.5px; border: 1.5px solid var(--ink); border-radius: 999px; padding: 5px 13px; background: var(--parchment); }
+    .tag-row .count { font-family: var(--mono); font-size: 11.5px; opacity: 0.6; }
+    .tag-row button { margin-left: auto; font-family: var(--mono); font-size: 12px; background: transparent; border: 1.5px solid var(--ink); border-radius: 8px; padding: 4px 12px; cursor: pointer; }
+    .tag-row button:hover { background: var(--blaze); color: #fff; }
+    .tags-panel .add-row { margin: 14px 0 0; }
+    .tags-panel select { font: inherit; font-size: 14px; color: inherit; background: var(--parchment); border: 1.5px solid var(--ink); border-radius: 9px; padding: 10px 12px; max-width: 220px; }
   </style>
 </head>
 <body>
@@ -79,6 +89,16 @@
       <div class="add-row">
         <input id="new-name" type="text" placeholder="new-repo-name…" autocomplete="off" spellcheck="false" />
         <button class="btn Go" id="add-entry" type="button">Add</button>
+      </div>
+
+      <div class="tags-panel">
+        <h2 class="mono">CATEGORIES</h2>
+        <div id="tag-list"></div>
+        <div class="add-row">
+          <input id="new-tag" type="text" placeholder="new-tag…" autocomplete="off" spellcheck="false" />
+          <select id="new-tag-project"></select>
+          <button class="btn Go" id="add-tag" type="button">Add tag</button>
+        </div>
       </div>
 
       <div id="entries"></div>

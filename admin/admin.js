@@ -75,6 +75,7 @@ async function init() {
 }
 
 function render() {
+  renderTags();
   const wrap = $("entries");
   wrap.innerHTML = "";
   Object.keys(state.entries).sort().forEach((name) => {
@@ -119,6 +120,69 @@ function render() {
     wrap.innerHTML = '<p class="mono">No entries. Add one above.</p>';
   }
 }
+
+function allTags() {
+  const freq = {};
+  Object.values(state.entries).forEach((e) => {
+    e.tags.forEach((t) => { freq[t] = (freq[t] || 0) + 1; });
+  });
+  return Object.entries(freq).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+}
+
+function renderTags() {
+  const list = $("tag-list");
+  list.innerHTML = "";
+  const tags = allTags();
+  tags.forEach(([tag, count]) => {
+    const row = document.createElement("div");
+    row.className = "tag-row";
+    const chip = document.createElement("span");
+    chip.className = "chip";
+    chip.textContent = tag;
+    const n = document.createElement("span");
+    n.className = "count";
+    n.textContent = `× ${count}`;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Remove";
+    btn.addEventListener("click", () => {
+      Object.values(state.entries).forEach((e) => {
+        e.tags = e.tags.filter((t) => t !== tag);
+      });
+      render();
+      status(`Removed tag "${tag}" everywhere — copy/download JSON to make it stick.`);
+    });
+    row.append(chip, n, btn);
+    list.appendChild(row);
+  });
+  if (!tags.length) {
+    list.innerHTML = '<p class="mono" style="font-size:12.5px;opacity:.6">No tags yet.</p>';
+  }
+  const sel = $("new-tag-project");
+  sel.innerHTML = "";
+  Object.keys(state.entries).sort().forEach((name) => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  });
+}
+
+$("add-tag").addEventListener("click", () => {
+  const tag = $("new-tag").value.trim().toLowerCase();
+  const project = $("new-tag-project").value;
+  if (!tag) return status("Type a tag name first.");
+  if (!project || !state.entries[project]) return status("Pick a project first.");
+  if (state.entries[project].tags.includes(tag)) return status(`"${tag}" is already on ${project}.`);
+  state.entries[project].tags.push(tag);
+  $("new-tag").value = "";
+  render();
+  status(`Added tag "${tag}" to ${project}.`);
+});
+
+$("new-tag").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") $("add-tag").click();
+});
 
 function buildJSON() {
   const projects = Object.keys(state.entries).sort().map((name) => {
