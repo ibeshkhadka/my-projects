@@ -50,11 +50,11 @@ async function init() {
           name: r.name,
           description: c.description || r.description || "No description yet.",
           htmlUrl: r.html_url,
-          liveUrl: c.liveUrl || null,
+          liveUrl: c.liveUrl || r.homepage || null,
           tags: c.tags || [],
           updatedAt: r.updated_at,
           private: r.private,
-          hasLive: Boolean(c.liveUrl),
+          hasLive: Boolean(c.liveUrl || r.homepage),
         };
       });
 
