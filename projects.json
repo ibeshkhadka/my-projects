@@ -36,6 +36,12 @@
       "name": "stemkit",
       "description": "Split any YouTube song into stems.",
       "tags": ["music", "ai"]
+    },
+    {
+      "name": "Free-Services-Resources",
+      "liveUrl": "https://ibeshkhadka.github.io/Free-Services-Resources/",
+      "description": "Resource Hub — a personal discovery and bookmark library for developer, AI, and web-building tools.",
+      "tags": ["tools", "web", "ai"]
     }
   ]
 }
